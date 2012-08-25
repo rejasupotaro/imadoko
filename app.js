@@ -9,7 +9,8 @@ var myApns = require('./lib/MyApns').get();
 
 // redis setting
 var redis = require('redis');
-var redisClient = redis.createClient(6379, 'dvm135.lo.mixi.jp');
+var redisHost = 'hostname';
+var redisClient = redis.createClient(6379, redisHost);
 
 var app = express();
 app.configure(function(){
@@ -33,8 +34,8 @@ app.get('/', function(req, res) {
 });
 
 app.get('/api', function(req, res) {
-    var json = { deviceToken: "6aaee5870f798abc29cf6d7f1d2e2bb60130aa8c9f74ab75ca7e11f86ba45d67" }
-    var myDevice = new myApns.apns.Device(json.deviceToken); 
+    var deviceToken = "xxxxxxxx";
+    var myDevice = new myApns.apns.Device(deviceToken); 
 
     var note = new apns.Notification();
     note.expiry = Math.floor(Date.now() / 1000) + 3600;
@@ -49,7 +50,6 @@ app.get('/api', function(req, res) {
     res.send("OK");
 });
 
-//app.get('/api/request_imadoko', requestImadoko);
 app.post('/api/request_imadoko', requestImadoko);
 
 function requestImadoko(req, res) {
@@ -78,7 +78,6 @@ function requestImadoko(req, res) {
     res.send(resData);
 }
 
-//app.get('/api/response_imadoko', responseImadoko);
 app.post('/api/response_imadoko', responseImadoko);
 
 function responseImadoko(req, res) {
@@ -111,7 +110,6 @@ function responseImadoko(req, res) {
     res.send(resData);
 }
 
-//app.get('/api/lookup_imadoko', lookupImadoko);
 app.post('/api/lookup_imadoko', lookupImadoko);
 
 function lookupImadoko(req, res) {
@@ -153,8 +151,6 @@ function lookupImadoko(req, res) {
                 redisData = JSON.parse(replies);
                 console.log("redisData: " + redisData);
 
-                //if (redisData != null) redisData.distance = calcDistance(redisData.location, redisData.realLocation)
-                
                 console.log("----RESPONSE DATA-----");
                 resJson.response = redisData;
                 console.log(resJson + "\n");
@@ -165,7 +161,6 @@ function lookupImadoko(req, res) {
     });
 };
 
-//app.get('/api/reqres_imadoko', reqresImadoko);
 app.post('/api/reqres_imadoko', reqresImadoko);
 
 function reqresImadoko(req, res) {
@@ -213,7 +208,6 @@ function reqresImadoko(req, res) {
     });
 };
 
-//app.get('/api/lookup_reqres_imadoko', lookupReqresImadoko);
 app.post('/api/lookup_reqres_imadoko', lookupReqresImadoko);
 
 function lookupReqresImadoko(req, res) {
@@ -270,7 +264,6 @@ function checkUserId(json) {
     }
 }
 
-// ロケーションのJSONを引数に2点間の距離(km)を返す
 function calcDistance(locJson1, locJson2) {
     if (locJson1 && locJson2) {
         return Location.distance(
